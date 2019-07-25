@@ -62,7 +62,7 @@ flex_column = {
 }
 unflex_column = {
     'flex': 0,
-    'min-width': '220px',
+    'min-width': '260px',
     'color': osparc_style['color'],
     'backgroundColor': osparc_style['backgroundColor']
 }
@@ -92,12 +92,12 @@ dcc_input_button = {
     'backgroundColor': dcc_input['backgroundColor']
 }
 dcc_input_label = {
-    'width': '120px',
+    'width': '180px',
     'float': 'left'
 }
 dcc_input_number = {
     'height': '30px',
-    'width': '100px',
+    'width': '80px',
     'color': dcc_input['color'],
     'backgroundColor': dcc_input['backgroundColor']
 }
@@ -166,7 +166,7 @@ def get_empty_output_1_graph(fixed_tst=True, plot_vs_qst=False, plot_vs_tCNAP=Fa
     layout = go.Layout(
         scene=dict(
             xaxis=dict(
-                title='CV (m/s)',
+                title='Conduction Speed (m/s)',
                 gridcolor=osparc_style['gridColor'],
                 zerolinecolor='rgb(255, 255, 255)',
                 showbackground=True,
@@ -175,14 +175,14 @@ def get_empty_output_1_graph(fixed_tst=True, plot_vs_qst=False, plot_vs_tCNAP=Fa
                 autorange=True
             ),
             yaxis=dict(
-                title='I_st (mA)',
+                title='Pulse Current (mA)',
                 gridcolor=osparc_style['gridColor'],
                 zerolinecolor='rgb(255, 255, 255)',
                 showbackground=True,
                 backgroundcolor=osparc_style['backgroundColor']
             ),
             zaxis=dict(
-                title='V_pred (uV)',
+                title='CNAP Amplitude (uV)',
                 gridcolor=osparc_style['gridColor'],
                 zerolinecolor='rgb(255, 255, 255)',
                 showbackground=True,
@@ -212,7 +212,7 @@ def get_empty_output_1_graph(fixed_tst=True, plot_vs_qst=False, plot_vs_tCNAP=Fa
 
     if not fixed_tst:
         layout['scene']['yaxis'].update(
-            title='t_st (mA)'
+            title='Pulse Duration (mA)'
         )
     if plot_vs_qst:
         layout['scene']['yaxis'].update(
@@ -232,12 +232,12 @@ def get_empty_output_2_graph(fixed_tst=True, plot_vs_qst=False, plot_vs_tCNAP=Fa
     layout = go.Layout(
         scene=dict(
             xaxis=dict(
-                title='CV (m/s)',
+                title='Conduction speed (m/s)',
                 type='log',
                 autorange=True
             ),
             yaxis=dict(
-                title='I_st (mA)'
+                title='Pulse Current (mA)'
             )
         ),
         margin=dict(
@@ -262,7 +262,7 @@ def get_empty_output_2_graph(fixed_tst=True, plot_vs_qst=False, plot_vs_tCNAP=Fa
 
     if not fixed_tst:
         layout['scene']['yaxis'].update(
-            title='t_st (mA)'
+            title='Pulse Duration (ms)'
         )
     if plot_vs_qst:
         layout['scene']['yaxis'].update(
@@ -339,7 +339,7 @@ app.layout = html.Div(children=[
                             children=[
                                 html.Div([
                                     html.Div([
-                                        html.Label('Starting tst (mA):')
+                                        html.Label('First Pulse Current (mA):')
                                     ], style=dcc_input_label),
                                     dcc.Input(
                                         id='current_in_1',
@@ -351,7 +351,7 @@ app.layout = html.Div(children=[
 
                                 html.Div([
                                     html.Div([
-                                        html.Label('Ending tst (mA):'),
+                                        html.Label('Last Current (mA):'),
                                     ], style=dcc_input_label),
                                     dcc.Input(
                                         id='current_in_2',
@@ -375,7 +375,7 @@ app.layout = html.Div(children=[
 
                                 html.Div([
                                     html.Div([
-                                        html.Label('Fixed Ist (ms):')
+                                        html.Label('Fixed Pulse Duration (ms):')
                                     ], style=dcc_input_label),
                                     dcc.Input(
                                         id='current_in_4',
@@ -396,7 +396,7 @@ app.layout = html.Div(children=[
                             children=[
                                 html.Div([
                                     html.Div([
-                                        html.Label('Starting Ist (mA):')
+                                        html.Label('First Pulse Duration (ms):')
                                     ], style=dcc_input_label),
                                     dcc.Input(
                                         id='duration_in_1',
@@ -408,7 +408,7 @@ app.layout = html.Div(children=[
 
                                 html.Div([
                                     html.Div([
-                                        html.Label('Ending Ist (mA):'),
+                                        html.Label('Last Duration (ms):'),
                                     ], style=dcc_input_label),
                                     dcc.Input(
                                         id='duration_in_2',
@@ -420,7 +420,7 @@ app.layout = html.Div(children=[
 
                                 html.Div([
                                     html.Div([
-                                        html.Label('Step Size (mA):')
+                                        html.Label('Step Size (ms):')
                                     ], style=dcc_input_label),
                                     dcc.Input(
                                         id='duration_in_3',
@@ -432,7 +432,7 @@ app.layout = html.Div(children=[
 
                                 html.Div([
                                     html.Div([
-                                        html.Label('Fixed tst (ms):')
+                                        html.Label('Fixed Pulse Current (mA):')
                                     ], style=dcc_input_label),
                                     dcc.Input(
                                         id='duration_in_4',
@@ -646,7 +646,8 @@ def build_input_graphs(data):
 
     if (plot_vs_tcnap):
         fig['layout']['xaxis'].update(
-            autorange=True
+            autorange=True,
+            title='Time (ms)',
         )
     else:
         fig['layout']['xaxis'].update(
@@ -742,7 +743,13 @@ def build_graph_out_2(data):
     x = data_heatmap["x"]
     y = data_heatmap["y"]
     z = data_heatmap["z"]
-    data = go.Heatmap(x=x, y=y, z=z)
+    data = go.Heatmap(
+        x=x,
+        y=y,
+        z=z,
+        colorbar={
+            "title": "Activation"
+        })
 
     fig['data'] = [data]
     return fig
